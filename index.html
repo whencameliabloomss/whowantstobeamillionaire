@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Who Wants to Be a Millionaire? English Edition</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;700&display=swap">
+<style>
+:root{--bg:#0c0a2b;--panel:#17164f;--line:#5b5ae0;--gold:#f5b83d;--ink:#f4f2ff;--mute:#a4a2dc;--ok:#1fa35a;--bad:#d6403f;--sel:#e8861f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px);background:#0c0a2b;color-scheme:dark}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;min-height:100%;background:radial-gradient(ellipse at 50% 0%,#2b2aa0 0%,var(--bg) 62%);color:var(--ink);font-family:Rubik,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.4}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid #fff;outline-offset:3px}
+[hidden]{display:none!important}
+.game{display:grid;grid-template-columns:1fr 210px;gap:24px;max-width:1120px;margin:0 auto;padding:18px}
+.game.solo{grid-template-columns:1fr}
+.center{text-align:center;padding:8vh 12px}
+h1{font-size:clamp(2rem,6vw,3.6rem);line-height:1.1;margin:0 0 8px;color:var(--gold)}
+.sub{font-size:1.2rem;color:var(--mute);margin:0 0 28px}
+.rules{display:inline-block;text-align:left;margin:0 0 30px;padding:0;list-style:none;font-size:1.05rem}
+.rules li{margin:6px 0;padding-left:20px;position:relative}
+.rules li::before{content:"";position:absolute;left:0;top:.55em;width:8px;height:8px;background:var(--gold);transform:rotate(45deg)}
+.btn{background:var(--gold);color:#1b1300;border:0;padding:14px 34px;border-radius:999px;font-weight:700;font-size:1.15rem}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.top{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;margin-bottom:14px}
+.prize{font-weight:700;color:var(--gold);font-size:1.1rem}
+.prize span{color:var(--mute);font-weight:400;margin-right:8px}
+.life{display:flex;gap:8px;flex-wrap:wrap}
+.life button{background:var(--panel);border:2px solid var(--line);border-radius:999px;padding:7px 16px;font-size:.95rem;font-weight:600}
+.life button:disabled{opacity:.35;text-decoration:line-through;cursor:default}
+.qbox{background:var(--panel);border:2px solid var(--line);border-radius:16px;padding:22px 26px;margin-bottom:18px}
+.qbox small{color:var(--mute);font-size:.95rem}
+.qbox h2{margin:6px 0 0;font-size:clamp(1.35rem,3vw,2.1rem);line-height:1.3;font-weight:600}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ans{--line:#5b5ae0;--face:#17164f;position:relative;isolation:isolate;display:flex;gap:12px;align-items:center;text-align:left;border:0;padding:16px 30px;min-height:68px;font-size:clamp(1.05rem,2.2vw,1.5rem);background:var(--line);clip-path:polygon(22px 0,calc(100% - 22px) 0,100% 50%,calc(100% - 22px) 100%,22px 100%,0 50%);transition:background .2s}
+.ans::before{content:"";position:absolute;inset:3px;z-index:-1;background:var(--face);clip-path:polygon(20px 0,calc(100% - 20px) 0,100% 50%,calc(100% - 20px) 100%,20px 100%,0 50%)}
+.ans b{color:var(--gold)}
+.ans:hover:not(:disabled){--line:var(--gold)}
+.ans:focus-visible{--line:#fff;outline:0}
+.ans.sel{--face:var(--sel);color:#1b1000}.ans.sel b{color:#1b1000}
+.ans.ok{--face:var(--ok);--line:#9dffc8}
+.ans.bad{--face:var(--bad);--line:#ffb0af}
+.ans.gone{visibility:hidden}
+#aid{background:var(--panel);border:2px dashed var(--line);border-radius:14px;padding:14px 18px;margin-top:16px}
+#aid p{margin:0}
+.bars{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;align-items:end;height:120px}
+.bars div{text-align:center;display:flex;flex-direction:column;justify-content:flex-end;height:100%;font-weight:600}
+.bars i{display:block;background:var(--gold);border-radius:6px 6px 0 0;margin-top:4px}
+#note{margin:16px 0 0;padding:14px 18px;border-left:5px solid var(--gold);background:#ffffff14;border-radius:0 12px 12px 0;font-size:1.1rem}
+.bar{display:flex;gap:12px;justify-content:space-between;align-items:center;margin-top:20px;flex-wrap:wrap}
+#ladder{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px}
+#ladder li{display:flex;justify-content:space-between;padding:3px 12px;font-size:.9rem;border-radius:8px;color:var(--mute);font-variant-numeric:tabular-nums}
+#ladder li.safe{color:var(--ink);font-weight:600}
+#ladder li.done{opacity:.45}
+#ladder li.now{background:var(--gold);color:#1b1300;font-weight:700}
+.big{font-size:clamp(2.4rem,8vw,4.5rem);font-weight:700;color:var(--gold);margin:10px 0 28px}
+@media (max-width:820px){.game{grid-template-columns:1fr}#side{display:none}.grid{grid-template-columns:1fr}.qbox{padding:16px 18px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main class="game solo" id="g">
+<div>
+<section id="start" class="center">
+<h1>Who Wants to Be a Millionaire?</h1>
+<p class="sub">English lesson edition</p>
+<ul class="rules">
+<li>30 questions: grammar, vocabulary, idioms and surprising facts</li>
+<li>Safe prizes after question 10 and question 20</li>
+<li>Three lifelines: 50:50, Ask the class, Phone a friend</li>
+<li>A wrong answer drops you to your last safe prize</li>
+</ul><br>
+<button class="btn" id="play0">Play</button>
+</section>
+
+<section id="play" hidden>
+<div class="top"><div class="prize"><span id="qn"></span>Playing for <b id="pf"></b></div>
+<div class="life"><button id="lf">50:50</button><button id="lc">Ask the class</button><button id="lp">Phone a friend</button></div></div>
+<div class="qbox"><small id="cat"></small><h2 id="q"></h2></div>
+<div class="grid" id="ans"></div>
+<div id="aid" hidden></div>
+<p id="note" hidden></p>
+<div class="bar"><button class="btn" id="go">Final answer</button><button class="btn ghost" id="walk">Take the money</button></div>
+</section>
+
+<section id="end" class="center" hidden>
+<h1 id="res"></h1>
+<div class="big" id="amt"></div>
+<button class="btn" id="again">Play again</button>
+</section>
+</div>
+<aside id="side"><ol id="ladder"></ol></aside>
+</main>
+
+<script>
+const Q=[
+{c:"General knowledge",q:"Which of these animals is NOT a mammal?",a:["Dolphin","Bat","Whale","Penguin"],k:3,n:"A penguin is a bird. Dolphins, bats and whales are mammals: they feed their babies milk."},
+{c:"Vocabulary",q:"What is the opposite of “expensive”?",a:["cheap","heavy","narrow","quiet"],k:0,n:"The opposite of expensive is cheap (low price)."},
+{c:"Grammar",q:"Look! The children ___ in the garden.",a:["play","are playing","played","plays"],k:1,n:"“Look!” shows the action is happening now → Present Continuous: are + verb-ing."},
+{c:"Grammar",q:"She ___ to school every day.",a:["go","going","goes","are going"],k:2,n:"Present Simple, he/she/it → verb + -s: she goes."},
+{c:"General knowledge",q:"What is the capital of Australia?",a:["Sydney","Melbourne","Canberra","Perth"],k:2,n:"Sydney is bigger and more famous, but the capital is Canberra."},
+{c:"General knowledge",q:"How many continents are there (in the usual English-speaking model)?",a:["Five","Six","Seven","Eight"],k:2,n:"Seven: Africa, Antarctica, Asia, Australia/Oceania, Europe, North America, South America."},
+{c:"Vocabulary",q:"I’m tired. I need to ___ a break.",a:["do","make","put","take"],k:3,n:"Collocation: take a break (also take a rest, take a photo, take a shower)."},
+{c:"Vocabulary",q:"Where can you borrow books for free?",a:["in a bookshop","in a library","in a stationery shop","in a kiosk"],k:1,n:"False friend! library = библиотека, while a shop that sells books is a bookshop."},
+{c:"Grammar",q:"If it rains tomorrow, we ___ at home.",a:["stayed","would stay","will stay","staying"],k:2,n:"First conditional: If + Present Simple, … will + infinitive."},
+{c:"General knowledge",q:"Which planet is known as the Red Planet?",a:["Venus","Mars","Jupiter","Mercury"],k:1,n:"Mars looks red because of iron oxide (rust) on its surface."},
+{c:"General knowledge",q:"How many hearts does an octopus have?",a:["Three","One","Two","Eight"],k:0,n:"Three! Two pump blood to the gills and one pumps it around the body."},
+{c:"Grammar",q:"This is the ___ film I have ever seen!",a:["more good","gooder","best","most good"],k:2,n:"good → better → the best (irregular superlative)."},
+{c:"Grammar",q:"I haven’t seen her ___ Monday.",a:["for","since","from","during"],k:1,n:"since + a point in time (Monday, 2020); for + a period of time (three days)."},
+{c:"Idioms",q:"Before a performance, actors say “Break a leg!” What does it mean?",a:["Be careful!","Good luck!","Hurry up!","I’m sorry"],k:1,n:"“Break a leg” is a way to wish someone good luck, especially before a show."},
+{c:"Vocabulary",q:"In English, what is a “magazine”?",a:["a shop where you buy food","a bag for books","a small supermarket","a publication with articles and photos"],k:3,n:"False friend! For Russian speakers: магазин = shop / store, but magazine = журнал."},
+{c:"Grammar",q:"I’m looking forward ___ you next week.",a:["to see","see","to seeing","seeing"],k:2,n:"Here “to” is a preposition, so a verb after it takes -ing: look forward to seeing."},
+{c:"General knowledge",q:"Which letter is the most common in written English?",a:["T","E","A","S"],k:1,n:"E is the most frequent letter in English texts."},
+{c:"General knowledge",q:"What is the smallest country in the world by area?",a:["Monaco","San Marino","Liechtenstein","Vatican City"],k:3,n:"Vatican City covers only about 0.44 square kilometres."},
+{c:"Grammar",q:"She asked me where ___.",a:["did I live","do I live","I lived","I do live"],k:2,n:"Reported questions use statement word order, with no do/did: where I lived."},
+{c:"Grammar",q:"I wish I ___ more free time.",a:["have","would have","had","will have"],k:2,n:"After “wish” about the present we use Past Simple: I wish I had…"},
+{c:"Word formation",q:"Her ___ to learn languages is amazing.",a:["ability","able","ably","unable"],k:0,n:"After “her” we need a noun: ability. (The adjective is able.)"},
+{c:"Idioms",q:"What does “once in a blue moon” mean?",a:["every night","very rarely","at midnight","when it’s cold"],k:1,n:"It describes something that happens very rarely."},
+{c:"Word origins",q:"The word “quarantine” comes from an old Italian phrase meaning “… days”. How many?",a:["40","10","14","100"],k:0,n:"Quaranta giorni = 40 days, the time ships arriving in Venice had to wait before landing."},
+{c:"Vocabulary",q:"In English, “actual” means …",a:["relevant, topical","modern","important","real, existing"],k:3,n:"False friend! актуальный = relevant / topical, but actual = real (in actual fact = на самом деле)."},
+{c:"Idioms",q:"What does “let the cat out of the bag” mean?",a:["to lose a pet","to reveal a secret","to make a big mistake","to start a fight"],k:1,n:"It means to tell a secret by accident."},
+{c:"Grammar",q:"By this time next year, I ___ my university course.",a:["will finish","finish","will have finished","am finishing"],k:2,n:"Future Perfect: will have + past participle, for an action completed before a future moment."},
+{c:"Grammar",q:"If I ___ harder, I would have passed the exam.",a:["studied","study","would study","had studied"],k:3,n:"Third conditional (past, unreal): If + Past Perfect, … would have + past participle."},
+{c:"Grammar",q:"Neither of the students ___ the answer.",a:["know","have known","are knowing","knows"],k:3,n:"“Neither of” is followed by a singular verb in standard English: neither … knows."},
+{c:"General knowledge",q:"Counting native AND non-native speakers, which language is spoken by the most people in the world?",a:["Mandarin Chinese","Spanish","English","Hindi"],k:2,n:"English has around 1.5 billion speakers in total, and most of them learned it as a second language."},
+{c:"Word origins",q:"The word “salary” comes from a Latin word meaning …",a:["gold","work","salt","bread"],k:2,n:"Latin salarium: money given to Roman soldiers to buy salt (sal)."}
+];
+const P=[100,200,300,500,1000,1500,2000,3000,4000,5000,7500,10000,15000,20000,30000,40000,50000,60000,75000,100000,125000,150000,200000,250000,300000,400000,500000,600000,750000,1000000];
+const fmt=n=>n.toLocaleString("en-US")+" ₸";
+const $=id=>document.getElementById(id);
+let i=0,sel=null,locked=false,used={},gone=[],mode="final",T=null;
+
+function show(id){["start","play","end"].forEach(s=>$(s).hidden=s!==id);$("g").className="game"+(id==="play"?"":" solo");$("side").hidden=id!=="play"}
+function begin(){i=0;used={};newQ();show("play")}
+function newQ(){
+  sel=null;locked=false;gone=[];mode="final";clearInterval(T);
+  $("aid").hidden=true;$("note").hidden=true;
+  $("go").textContent="Final answer";$("go").disabled=true;$("walk").disabled=false;
+  const q=Q[i];
+  $("cat").textContent=q.c;$("qn").textContent="Question "+(i+1)+" of 30. ";$("pf").textContent=fmt(P[i]);$("q").textContent=q.q;
+  $("ans").innerHTML=q.a.map((t,j)=>`<button class="ans" data-j="${j}"><b>${"ABCD"[j]}</b><span>${t}</span></button>`).join("");
+  $("lf").disabled=!!used.f;$("lc").disabled=!!used.c;$("lp").disabled=!!used.p;
+  $("ladder").innerHTML=P.map((p,j)=>`<li class="${j===i?"now":j<i?"done":""}${j===9||j===19?" safe":""}"><span>${j+1}</span><span>${fmt(p)}</span></li>`).reverse().join("");
+}
+const btn=j=>$("ans").children[j];
+function pick(j){
+  if(locked||gone.includes(j))return;
+  sel=j;[...$("ans").children].forEach((b,n)=>b.classList.toggle("sel",n===j));
+  $("go").disabled=false;
+}
+function lock(){
+  locked=true;$("go").disabled=true;$("walk").disabled=true;
+  ["lf","lc","lp"].forEach(id=>$(id).disabled=true);clearInterval(T);
+  setTimeout(()=>{
+    const q=Q[i];
+    [...$("ans").children].forEach(b=>b.classList.remove("sel"));
+    btn(q.k).classList.add("ok");
+    if(sel!==q.k)btn(sel).classList.add("bad");
+    $("note").textContent=q.n;$("note").hidden=false;
+    if(sel===q.k){mode="next";$("go").textContent=i===29?"Win the million!":"Next question"}
+    else{mode="lose";$("go").textContent="See result"}
+    $("go").disabled=false;
+  },900);
+}
+function safe(){return i>=20?P[19]:i>=10?P[9]:0}
+function finish(amount,kind){
+  $("res").textContent=kind==="win"?"You’re a millionaire!":kind==="walk"?"A wise decision!":"Not this time!";
+  $("amt").textContent=fmt(amount);
+  show("end");
+}
+$("ans").onclick=e=>{const b=e.target.closest(".ans");if(b)pick(+b.dataset.j)};
+$("go").onclick=()=>{
+  if(mode==="final"){if(sel!==null)lock()}
+  else if(mode==="next"){if(i===29)finish(P[29],"win");else{i++;newQ()}}
+  else finish(safe(),"lose");
+};
+$("walk").onclick=()=>finish(i>0?P[i-1]:0,"walk");
+$("play0").onclick=begin;$("again").onclick=begin;
+
+$("lf").onclick=()=>{
+  if(used.f||locked)return;used.f=1;$("lf").disabled=true;
+  gone=[0,1,2,3].filter(j=>j!==Q[i].k).sort(()=>Math.random()-.5).slice(0,2);
+  gone.forEach(j=>btn(j).classList.add("gone"));
+  if(gone.includes(sel)){sel=null;$("go").disabled=true}
+};
+$("lc").onclick=()=>{
+  if(used.c||locked)return;used.c=1;$("lc").disabled=true;
+  const k=Q[i].k,alive=[0,1,2,3].filter(j=>!gone.includes(j)),others=alive.filter(j=>j!==k);
+  const top=Math.max(35,Math.min(90,Math.round(90-i*1.9)+Math.round(Math.random()*10-5)));
+  const w=others.map(()=>Math.random()+.2),s=w.reduce((a,b)=>a+b,0),pc=[0,0,0,0];
+  pc[k]=top;let left=100-top;
+  others.forEach((j,n)=>{pc[j]=n===others.length-1?left:Math.round((100-top)*w[n]/s);left-=pc[j]});
+  $("aid").innerHTML='<div class="bars">'+pc.map((p,j)=>`<div>${p}%<i style="height:${p}%"></i>${"ABCD"[j]}</div>`).join("")+"</div>";
+  $("aid").hidden=false;
+};
+$("lp").onclick=()=>{
+  if(used.p||locked)return;used.p=1;$("lp").disabled=true;
+  let t=30;const upd=()=>{$("aid").innerHTML=`<p><b>Phone a friend.</b> A classmate has <b>${t}</b> seconds to advise the player.</p>`};
+  upd();$("aid").hidden=false;
+  T=setInterval(()=>{t--;if(t<=0){clearInterval(T);$("aid").innerHTML="<p><b>Time’s up!</b> The player decides.</p>"}else upd()},1000);
+};
+document.addEventListener("keydown",e=>{
+  if($("play").hidden)return;
+  const j="abcd".indexOf(e.key.toLowerCase());
+  if(e.key.length===1&&j>-1)pick(j);
+  else if(e.key==="Enter"&&!$("go").disabled){e.preventDefault();$("go").click()}
+});
+</script>
+</body>
+</html>
